@@ -1,0 +1,103 @@
+#!/bin/sh
+
+# =================================================================
+# GProxy - 基于 SSH 隧道的轻量级网络加速工具
+# 兼容标准 Linux 和 iStore (OpenWrt/BusyBox ash)
+# =================================================================
+
+# --- 定位并加载 lib 模块 ---
+
+# 确定脚本自身的目录
+SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+
+# 查找 lib 目录
+# NOTE: 通过检查 common.sh 是否存在来确认目录有效，避免误匹配系统 /usr/lib/
+if [ -n "$GPROXY_LIB_DIR" ] && [ -f "$GPROXY_LIB_DIR/common.sh" ]; then
+    LIB_DIR="$GPROXY_LIB_DIR"
+elif [ -f "/usr/lib/gproxy/common.sh" ]; then
+    LIB_DIR="/usr/lib/gproxy"
+elif [ -f "$SCRIPT_DIR/../lib/common.sh" ]; then
+    LIB_DIR="$SCRIPT_DIR/../lib"
+else
+    printf "[ERROR] 找不到 lib 目录，请检查安装是否完整\n" >&2
+    exit 1
+fi
+
+# 加载模块
+# shellcheck disable=SC1091
+. "$LIB_DIR/common.sh"
+# shellcheck disable=SC1091
+. "$LIB_DIR/config.sh"
+# shellcheck disable=SC1091
+. "$LIB_DIR/tunnel.sh"
+
+# --- 初始化 ---
+detect_platform
+
+# --- 参数处理 ---
+
+# 特殊参数：重置/重新配置
+if [ "$1" = "--config" ] || [ "$1" = "--reset" ]; then
+    reset_config
+    exit $?
+fi
+
+# 帮助信息
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    printf "GProxy - 基于 SSH 隧道的网络加速工具\n\n"
+    printf "用法: gproxy <命令>\n"
+    printf "示例: gproxy git clone https://github.com/...\n"
+    printf "      gproxy curl -I https://www.google.com\n"
+    printf "      gproxy bash -c \"bash <(curl -sL https://...)\" \n\n"
+    printf "选项:\n"
+    printf "  --config, --reset  重新配置服务器信息\n"
+    printf "  --help, -h         显示此帮助信息\n"
+    exit 0
+fi
+
+# 无参数时显示用法
+if [ -z "$1" ]; then
+    printf "用法: gproxy <命令>\n"
+    printf "示例: gproxy git clone https://github.com/...\n"
+    printf "重置: gproxy --config\n"
+    printf "帮助: gproxy --help\n"
+    exit 1
+fi
+
+# --- 主流程 ---
+
+# 1. 加载配置
+load_config || exit 1
+
+# 2. 检测并确保 SSH 客户端可用（OpenSSH 优先）
+detect_ssh_client || exit 1
+ensure_ssh_client || exit 1
+
+# 3. 启动隧道
+start_tunnel || exit 1
+
+# 4. 注册退出信号：无论脚本如何结束，都执行清理
+trap cleanup_tunnel EXIT INT TERM
+
+# 5. 等待隧道就绪
+wait_for_tunnel 10 || exit 1
+
+# 6. 设置代理环境变量
+setup_proxy_env
+
+log_success "代理就绪，执行: $*"
+printf '%s\n' "----------------------------------------------------"
+
+# 7. 执行用户传入的命令
+"$@"
+RET_CODE=$?
+
+printf '%s\n' "----------------------------------------------------"
+if [ "$RET_CODE" -eq 0 ]; then
+    log_success "任务完成"
+else
+    log_warn "任务执行返回错误 (Code: $RET_CODE)"
+fi
+
+# trap 会自动调用 cleanup_tunnel 关闭隧道
+exit "$RET_CODE"

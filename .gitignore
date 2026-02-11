@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 敏感信息
+config/*.pem
+config/id_rsa
+config/id_ed25519
+config/*.key
+
+# 用户配置
+.config/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 临时文件
+*.log
+*.tmp
